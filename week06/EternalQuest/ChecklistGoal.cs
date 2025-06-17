@@ -1,30 +1,49 @@
 public class ChecklistGoal : Goal
 {
-    private int _targetCount;
-    private int _currentCount;
-    private int _bonusPoints;
+    private string _name, _desc;
+    private int _points, _bonus, _target, _count;
 
-    public ChecklistGoal(string name, string description, int points, int targetCount, int bonusPoints)
-        : base(name, description, points)
+    public ChecklistGoal(string name, string desc, int points, int bonus, int target)
     {
-        _targetCount = targetCount;
-        _bonusPoints = bonusPoints;
-        _currentCount = 0;
+        _name = name;
+        _desc = desc;
+        _points = points;
+        _bonus = bonus;
+        _target = target;
+        _count = 0;
     }
 
     public override int RecordEvent()
     {
-        if (_currentCount < _targetCount)
+        if (_count < _target)
         {
-            _currentCount++;
-            return _points + (_currentCount == _targetCount ? _bonusPoints : 0);
+            _count++;
+            if (_count == _target)
+                return _points + _bonus;
+            return _points;
         }
         return 0;
     }
 
-    public override bool IsComplete() => _currentCount >= _targetCount;
+    public override string GetStatus()
+    {
+        string check = _count >= _target ? "X": " ";
+        return $"[{check}] {_name} ({_desc}) -- Completed: {_count}/{_target}";
+    }
 
-    public override string GetStatus() => IsComplete() ? "[X]" : $"[ ] Completed {_currentCount}/{_targetCount}";
+    public override string Serialize() =>
+        $"ChecklistGoal|{_name}|{_desc}|{_points}|{_bonus}|{_target}|{_count}";
 
-    public override string Serialize() => $"ChecklistGoal|{_name}|{_description}|{_points}|{_targetCount}|{_bonusPoints}|{_currentCount}";
+    public static ChecklistGoal Deserialize(string[] parts)
+    {
+        var goal = new ChecklistGoal(
+            parts[1],
+            parts[2],
+            int.Parse(parts[3]),
+            int.Parse(parts[4]),
+            int.Parse(parts[5])
+        );
+        goal._count = int.Parse(parts[6]);
+        return goal;
+    }
 }
