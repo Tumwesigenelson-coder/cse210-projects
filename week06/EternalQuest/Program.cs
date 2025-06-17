@@ -1,30 +1,34 @@
+// Attempt to exceed core requirements:
+// - Implemented polymorphism via abstract Goal class and derived types.
+// - Added file save/load functionality with serialization.
+// - Used a GoalManager class to encapsulate all goal logic and menu control.
+
 using System;
 
 class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Hello World! Welcome to my EternalQuest Project.");
-
         GoalManager manager = new GoalManager();
-        string input = "";
+        bool running = true;
 
-
-        while (input != "6")
+        while (running)
         {
-            Console.WriteLine("=== Eternal Quest Program ===");
-            Console.WriteLine();
-            Console.WriteLine("1. Create New Goal");
-            Console.WriteLine("2. List Goals");
-            Console.WriteLine("3. Record Event");
-            Console.WriteLine("4. Save Goals");
-            Console.WriteLine("5. Load Goals");
-            Console.WriteLine("6. Quit");
-            Console.WriteLine();
-            Console.Write("Choose an option you would like to take: ");
-            input = Console.ReadLine();
+            Console.WriteLine("\nEternal Quest - Goal Tracker");
+            manager.ShowScore();
+            Console.WriteLine("Choose from the menu Options below:");
+            Console.WriteLine("  1. Create New Goal");
+            Console.WriteLine("  2. List Goals");
+            Console.WriteLine("  3. Save Goals");
+            Console.WriteLine("  4. Load Goals");
+            Console.WriteLine("  5. Record Event");
+            Console.WriteLine("  6. Quit");
 
-            switch (input) 
+            Console.Write("What`s your option (1–6): ");
+            string input = Console.ReadLine();
+            Console.WriteLine();
+
+            switch (input)
             {
                 case "1":
                     manager.CreateGoal();
@@ -33,21 +37,24 @@ class Program
                     manager.DisplayGoals();
                     break;
                 case "3":
-                    manager.RecordEvent();
+                    Console.Write("Enter filename to save to: ");
+                    string saveFile = Console.ReadLine();
+                    manager.SaveGoals(saveFile);
                     break;
                 case "4":
-                    Console.Write("Enter filename to save: ");
-                    manager.SaveGoals(Console.ReadLine());
+                    Console.Write("Enter filename to load from: ");
+                    string loadFile = Console.ReadLine();
+                    manager.LoadGoals(loadFile);
                     break;
                 case "5":
-                    Console.Write("Enter filename to load: ");
-                    manager.LoadGoals(Console.ReadLine());
+                    manager.RecordEvent();
                     break;
                 case "6":
                     Console.WriteLine("Goodbye!");
+                    running = false;
                     break;
                 default:
-                    Console.WriteLine("Invalid input.\n");
+                    Console.WriteLine("Invalid input. Please choose a number 1–6.");
                     break;
             }
         }
