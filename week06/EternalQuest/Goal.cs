@@ -1,18 +1,24 @@
-public abstract class Goal
+public  abstract class Goal
 {
-    protected string _name;
-    protected string _description;
-    protected int _points;
-
-    public Goal(string name, string description, int points)
+    public abstract string Serialize();
+    public static Goal Deserialize(string data)
     {
-        _name = name;
-        _description = description;
-        _points = points;
+        string[] parts = data.Split('|');
+        string type = parts[0];
+
+        switch (type)
+        {
+            case "SimpleGoal":
+                return SimpleGoal.Deserialize(parts);
+            case "EternalGoal":
+                return EternalGoal.Deserialize(parts);
+            case "ChecklistGoal":
+                return ChecklistGoal.Deserialize(parts);
+            default:
+                throw new Exception("Unknown goal type.");
+        }
     }
 
-    public abstract int RecordEvent(); // Returns points earned
-    public abstract bool IsComplete();
-    public abstract string GetStatus(); // [ ] or [X] or progress
-    public abstract string Serialize(); // For saving
+    public abstract int RecordEvent();
+    public abstract string GetStatus();
 }
